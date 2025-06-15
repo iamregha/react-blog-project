@@ -1,3 +1,20 @@
+# React Blog Project
+
+This is a beginner-friendly React blog project created as part of a 6-week learning roadmap.
+
+## Features
+- Functional components
+- Props and state with `useState`
+- Dynamic rendering with `.map()`
+- Clean component structure
+
+## Getting Started
+
+### Install dependencies
+```bash
+npm install
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
