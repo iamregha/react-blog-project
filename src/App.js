@@ -25,6 +25,7 @@ function App() {
     <div>
       <Header />
       <h1>Welcome to my blog</h1>
+      <h1 className="text-3xl font-bold text-purple-600">Tailwind is working 🎉</h1>
 
       {posts.map((post) => (
         <Post key={post.id} title={post.title} content={post.content} />
