@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const posts = [
   {
     id: 1,
@@ -22,13 +24,12 @@ const Posts = () => {
       <h1 className="text-3xl font-bold mb-6 text-indigo-700">All Posts</h1>
       <div className="space-y-4">
         {posts.map((post) => (
-          <div
-            key={post.id}
-            className="bg-white p-4 rounded-xl shadow hover:shadow-md transition"
-          >
-            <h2 className="text-xl font-semibold text-gray-800">{post.title}</h2>
-            <p className="text-gray-600 mt-1">{post.summary}</p>
-          </div>
+          <Link to={`/posts/${post.id}`}>
+                <div className="bg-white p-4 rounded-xl shadow hover:shadow-md transition">
+                    <h2 className="text-xl font-semibold text-gray-800">{post.title}</h2>
+                    <p className="text-gray-600 mt-1">{post.summary}</p>
+                </div>
+            </Link>
         ))}
       </div>
     </div>
