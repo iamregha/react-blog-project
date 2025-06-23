@@ -1,11 +1,26 @@
+import ReactMarkdown from "react-markdown";
 import { useParams, Link } from "react-router-dom";
 
 const posts = [
   {
     id: 1,
     title: "How I Started Learning React",
-    summary: "A short story of how I built my first project...",
-    content: "This is the full post about learning React. It's been a journey!",
+    summary: "...",
+    content: `
+    # Getting Started with React
+
+    React is a **JavaScript library** for building user interfaces.
+    
+    ## Why I chose it
+    
+    - It's component-based
+    - It makes UI predictable
+    - Large community support
+
+    > "Learning React was the start of everything for me."
+
+    [Learn more](https://reactjs.org)
+    `
   },
   {
     id: 2,
@@ -37,7 +52,11 @@ const PostDetail = () => {
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold text-indigo-700">{post.title}</h1>
-      <p className="mt-4 text-gray-800">{post.content}</p>
+      <div className="prose max-w-none text-gray-800">
+      <ReactMarkdown>
+        {post.content}
+      </ReactMarkdown>
+      </div>
       <Link to="/posts" className="block mt-6 text-indigo-500 underline">← Back to all posts</Link>
     </div>
   );
