@@ -12,10 +12,10 @@ export default function PostDetail() {
       .then((res) => res.text())
       .then((text) => setContent(text))
       .catch((err) => {
-        console.error("Error loading markdown:", err);
-        setContent("Post not found.");
+        console.error("Markdown not found:", err);
+        setContent("# 404\n\nPost not found.");
       });
-  }, []);
+  }, [slug]);
 
   return (
     <div className="p-6">
