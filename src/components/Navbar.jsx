@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const Navbar = () => (
   <nav className="bg-white shadow-md p-4">
@@ -10,12 +11,12 @@ const Navbar = () => (
         <Link to="/" className="text-gray-700 hover:text-indigo-500">
           Home
         </Link>
-        <Link to="/about" className="text-gray-700 hover:text-indigo-500">
+        <NavLink to="/about" className={({ isActive }) => (isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-indigo-700")}>
           About
-        </Link>
-        <Link to="/posts" className="text-gray-700 hover:text-indigo-500">
-        Posts
-        </Link>
+        </NavLink>
+        <NavLink to="/posts" className={({ isActive }) => (isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-indigo-700")}>
+          Posts
+        </NavLink>
       </div>
     </div>
   </nav>
