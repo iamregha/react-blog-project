@@ -1,0 +1,83 @@
+import React, { useState } from "react";
+import ReactMarkdown from "react-markdown";
+
+const CreatePost = () => {
+  const [title, setTitle] = useState("");
+  const [summary, setSummary] = useState("");
+  const [slug, setSlug] = useState("");
+  const [author, setAuthor] = useState("");
+  const [content, setContent] = useState("");
+
+  return (
+    <div className="max-w-5xl mx-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+      {/* Form Side */}
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Create New Post</h2>
+        <input
+          type="text"
+          placeholder="Title"
+          className="w-full mb-2 p-2 border rounded"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Summary"
+          className="w-full mb-2 p-2 border rounded"
+          value={summary}
+          onChange={(e) => setSummary(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Slug (e.g., my-first-post)"
+          className="w-full mb-2 p-2 border rounded"
+          value={slug}
+          onChange={(e) => setSlug(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Author"
+          className="w-full mb-2 p-2 border rounded"
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+        />
+        <textarea
+          rows="10"
+          placeholder="Write your markdown content here..."
+          className="w-full mb-2 p-2 border rounded"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}/>
+        </div>
+
+        {/* Markdown Preview Side */}
+        <div>
+            <h2 className="text-2xl font-bold mb-4">Live Preview</h2>
+            <div className="prose max-w-none border p-4 rounded">
+                <ReactMarkdown>{content}</ReactMarkdown>
+            </div>
+        </div>
+        <div className="max-w-5xl mx-auto p-4 mt-12 border-t pt-6">
+            <h3 className="text-xl font-semibold mb-2">🧠 Markdown Cheat Sheet</h3>
+        <div className="text-sm text-gray-700 space-y-2">
+            <p><strong>Heading:</strong> <code># Title</code>, <code>## Subtitle</code></p>
+            <p><strong>Bold:</strong> <code>**bold**</code> | <strong>Italic:</strong> <code>*italic*</code></p>
+            <p><strong>List:</strong> <code>- Item</code>, <code>1. First</code></p>
+            <p><strong>Link:</strong> <code>[OpenAI](https://openai.com)</code></p>
+            <p><strong>Code:</strong> <code>`const x = 2`</code></p>
+            <p><strong>Code Block:</strong></p>
+            <pre className="bg-gray-100 rounded p-2 overflow-auto">
+                <code>
+                    ```js
+                    console.log("Hello, world!");
+                </code>
+            </pre>
+            <p><strong>Quote:</strong> <code>&gt; This is a quote</code></p>
+            <p><strong>Divider:</strong> <code>---</code></p>
+        </div>
+        </div>```
+    </div>
+   
+  );
+};
+
+export default CreatePost;
