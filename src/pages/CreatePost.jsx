@@ -55,6 +55,18 @@ const CreatePost = () => {
             <div className="prose max-w-none border p-4 rounded">
                 <ReactMarkdown>{content}</ReactMarkdown>
             </div>
+            <button
+              className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 mt-4"
+              onClick={() => {
+                const newPost = { title, summary, slug, author, content };
+                const existing = JSON.parse(localStorage.getItem("posts") || "[]");
+                existing.push(newPost);
+                localStorage.setItem("posts", JSON.stringify(existing));
+                alert("Post saved!");
+              }}>
+              Save Post
+            </button>
+
         </div>
         <div className="max-w-5xl mx-auto p-4 mt-12 border-t pt-6">
             <h3 className="text-xl font-semibold mb-2">🧠 Markdown Cheat Sheet</h3>
