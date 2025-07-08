@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
+import authors from "../data/authorsData";
 
 export default function PostDetail() {
   const { slug } = useParams();
@@ -7,6 +8,7 @@ export default function PostDetail() {
 
   const storedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
   const post = storedPosts.find((p) => p.slug === slug);
+  const authorInfo = authors.find(a => a.name === post?.author);
 
   if (!post) {
     return (
@@ -37,6 +39,15 @@ export default function PostDetail() {
       <div className="prose max-w-none text-gray-800">
         <ReactMarkdown>{post.content}</ReactMarkdown>
       </div>
+      {authorInfo && (
+            <div className="mt-10 p-4 bg-gray-100 rounded flex items-start gap-4">
+              <img src={authorInfo.avatar} alt={authorInfo.name} className="w-16 h-16 rounded-full object-cover" />
+              <div>
+                <p className="font-bold">{authorInfo.name}</p>
+                <p className="text-gray-600 text-sm">{authorInfo.bio}</p>
+              </div>
+            </div>
+          )}
       <div className="flex gap-4 mt-6">
         <button
           onClick={() => navigate(`/edit/${post.slug}`)}
