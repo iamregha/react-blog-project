@@ -1,9 +1,15 @@
+import { useLocation } from "react-router-dom";
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Posts() {
   const [searchTerm, setSearchTerm] = useState("");
   const [posts, setPosts] = useState([]);
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const selectedTag = queryParams.get("tag");
 
   useEffect(() => {
     const storedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
@@ -22,11 +28,35 @@ export default function Posts() {
         onChange={(e) => setSearchTerm(e.target.value)}
       />
 
+      {selectedTag && (
+        <div className="mb-4">
+          <span className="text-sm">
+            Showing posts tagged with{" "}
+            <span className="font-semibold text-blue-600">#{selectedTag}</span>
+          </span>
+          <Link
+            to="/posts"
+            className="ml-4 text-sm text-red-500 underline"
+          >
+            Clear Filter
+          </Link>
+        </div>
+      )}
+
+
       {posts
-        .filter(
-          (post) =>
+        .filter((post) => {
+          const matchesSearch =
             post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            post.summary.toLowerCase().includes(searchTerm.toLowerCase())
+            post.summary.toLowerCase().includes(searchTerm.toLowerCase());
+          
+          const matchesTag = selectedTag
+            ? post.tags?.includes(selectedTag)
+            : true;
+
+          return matchesSearch && matchesTag
+        }
+            
         )
         .map((post) => (
           <div
@@ -47,6 +77,18 @@ export default function Posts() {
               <Link to={`/posts/${post.slug}`}>{post.title}</Link>
             </h3>
             <p className="text-gray-700">{post.summary}</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {post.tags?.map((tag) => (
+                <Link
+                  to={`?tag=${encodeURIComponent(tag)}`}
+                  key={tag}
+                  className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full hover:bg-blue-200 transition"
+                 >
+                  #{tag}
+                </Link>
+              ))}
+            </div>
+
           </div>
         ))}
     </div>
