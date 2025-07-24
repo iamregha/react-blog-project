@@ -1,64 +1,111 @@
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 
 export default function EditPost() {
   const { slug } = useParams();
   const navigate = useNavigate();
-
-  const storedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
-  const post = storedPosts.find((p) => p.slug === slug);
-
-  const [title, setTitle] = useState(post?.title || "");
-  const [author, setAuthor] = useState(post?.author || "");
-  const [content, setContent] = useState(post?.content || "");
+  const [post, setPost] = useState(null);
 
   useEffect(() => {
-    if (!post) navigate("/posts");
-  }, [post, navigate]);
+    const storedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
+    const found = storedPosts.find((p) => p.slug === slug);
+    if (!found) {
+      alert("Post not found.");
+      navigate("/posts");
+    } else {
+      setPost(found);
+    }
+  }, [slug, navigate]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const updatedPosts = storedPosts.map((p) =>
-      p.slug === slug ? { ...p, title, author, content } : p
-    );
+  const handleChange = (e) => {
+    setPost({ ...post, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = () => {
+    if (!post.title || !post.summary || !post.author || !post.content) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    const updatedPost = {
+      ...post,
+      tags: Array.isArray(post.tags)
+      ? post.tags
+      : typeof post.tags === "string"
+      ?post.tags.split(",").map((tag) => tag.trim().toLowerCase()) 
+      : [],
+      date: post.date || new Date().toISOString(),
+    };
+
+    const allPosts = JSON.parse(localStorage.getItem("posts") || "[]");
+    const updatedPosts = allPosts.map((p) => (p.slug === slug ? updatedPost : p));
     localStorage.setItem("posts", JSON.stringify(updatedPosts));
+
+    alert("Post updated!");
     navigate(`/posts/${slug}`);
   };
 
+  if (!post) return <p className="p-4">Loading...</p>;
+
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-4">Edit Post</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="max-w-5xl mx-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Edit Post</h2>
         <input
           type="text"
-          className="w-full border p-2 rounded"
-          placeholder="Post Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
+          name="title"
+          placeholder="Title"
+          className="w-full mb-2 p-2 border rounded"
+          value={post.title}
+          onChange={handleChange}
         />
         <input
           type="text"
-          className="w-full border p-2 rounded"
-          placeholder="Author Name"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-          required
+          name="summary"
+          placeholder="Summary"
+          className="w-full mb-2 p-2 border rounded"
+          value={post.summary}
+          onChange={handleChange}
+        />
+        <input
+          type="text"
+          name="author"
+          placeholder="Author"
+          className="w-full mb-2 p-2 border rounded"
+          value={post.author}
+          onChange={handleChange}
+        />
+        <input
+          type="text"
+          name="tags"
+          placeholder="Tags (comma separated)"
+          className="w-full mb-2 p-2 border rounded"
+          value={post.tags?.join(", ")}
+          onChange={handleChange}
         />
         <textarea
-          className="w-full border p-2 rounded h-48"
-          placeholder="Post Content (Markdown)"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          required
-        ></textarea>
+          name="content"
+          rows="10"
+          placeholder="Markdown content..."
+          className="w-full mb-2 p-2 border rounded"
+          value={post.content}
+          onChange={handleChange}
+        />
         <button
-          type="submit"
-          className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+          onClick={handleSave}
         >
-          ✅ Save Changes
+          Save Changes
         </button>
-      </form>
+      </div>
+
+      <div>
+        <h2 className="text-2xl font-bold mb-4">Live Preview</h2>
+        <div className="prose max-w-none border p-4 rounded">
+          <ReactMarkdown>{post.content}</ReactMarkdown>
+        </div>
+      </div>
     </div>
   );
 }

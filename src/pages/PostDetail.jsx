@@ -1,75 +1,84 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
-import authors from "../data/authorsData";
+import NotFound from "./NotFound";
+//import authors from "../data/authorsData";
 
 export default function PostDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const [post, setPost] = useState(null);
 
-  const storedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
-  const post = storedPosts.find((p) => p.slug === slug);
-  const authorInfo = authors.find(a => a.name === post?.author);
+  useEffect(() => {
+    const storedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
+    const found = storedPosts.find((p) => p.slug === slug);
+    setPost(found || null)
+    /*if (!found) {
+      setPost ({ title: "404", content: "Post not found."});
+    } else {
+      setPost(found);
+    }*/
+  }, [slug]);
+  
+  //const post = storedPosts.find((p) => p.slug === slug);
+  //const authorInfo = authors.find(a => a.name === post?.author);
 
-  if (!post) {
-    return (
-      <div className="p-6 text-center">
-        <h1 className="text-2xl text-red-600 mb-2">404 - Post Not Found</h1>
-        <button
-          onClick={() => navigate("/posts")}
-          className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-        >
-          ← Back to Posts
-        </button>
-      </div>
-    );
-  }
+  if (!post) return <NotFound />; //return <p className="p-4">Loading...</p>
+  const handleDelete = () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+    if (!confirmDelete) return;
+
+    const existing = JSON.parse(localStorage.getItem("posts") || "[]");
+    const updated = existing.filter((p) => p.slug !== slug);
+    localStorage.setItem("posts", JSON.stringify(updated));
+    navigate("/posts");
+  };
 
   return (
-    <div className="p-6">
-      <button
-        onClick={() => navigate("/posts")}
-        className="mb-4 px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200"
-      >
-        ← Back to Posts
-      </button>
+    <div className="max-w-3xl mx-auto p-6">
+      <Link to="/posts" className="text-blue-600 underline mb-4 inline-block">
+        ← Back to posts
+      </Link>
 
-      <h1 className="text-3xl font-bold text-indigo-700 mb-2">{post.title}</h1>
-      <p className="text-sm text-gray-500 mb-4">By {post.author}</p>
+      <h1 className="text-3xl font-bold mb-2">{post.title}</h1>
+      <p className="text-sm text-gray-500 mb-2">
+        {new Date(post.date).toLocaleDateString("en-GB", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}{" "}
+        • By {post.author}
+      </p>
 
-      <div className="prose max-w-none text-gray-800">
+      <div className="mt-4 prose max-w-none text-gray-800">
         <ReactMarkdown>{post.content}</ReactMarkdown>
       </div>
-      {authorInfo && (
-            <div className="mt-10 p-4 bg-gray-100 rounded flex items-start gap-4">
-              <img src={authorInfo.avatar} alt={authorInfo.name} className="w-16 h-16 rounded-full object-cover" />
-              <div>
-                <p className="font-bold">{authorInfo.name}</p>
-                <p className="text-gray-600 text-sm">{authorInfo.bio}</p>
-              </div>
-            </div>
-          )}
-      <div className="flex gap-4 mt-6">
-        <button
-          onClick={() => navigate(`/edit/${post.slug}`)}
-          className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"        >
-          ✏️ Edit
-        </button>
 
-        <button
-          onClick={() => {
-            // eslint-disable-next-line no-restricted-globals
-            if (confirm("Are you sure you want to delete this post?")) {
-              const updatedPosts = storedPosts.filter((p) => p.slug !== slug);
-              localStorage.setItem("posts", JSON.stringify(updatedPosts));
-              navigate("/posts");
-            }
-          }}
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"        >
-          🗑 Delete
-        </button>
+      {/* Tags */}
+      <div className="mt-4 flex flex-wrap gap-2">
+        {post.tags?.map((tag) => (
+          <span key={tag} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+            #{tag}
+          </span>
+        ))}
       </div>
 
+      {/* Buttons */}
+      <div className="mt-6 flex gap-4">
+        <Link
+          to={`/posts/${post.slug}/edit`}
+          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+        >
+          Edit
+        </Link>
+
+        <button
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          onClick={handleDelete}
+        >
+          Delete
+        </button>
+      </div>
     </div>
   );
 }
-

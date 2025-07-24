@@ -11,6 +11,8 @@ export default function Posts() {
   const queryParams = new URLSearchParams(location.search);
   const selectedTag = queryParams.get("tag");
 
+  const [sortOrder, setSortOrder] = useState("newest");
+  
   useEffect(() => {
     const storedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
     setPosts(storedPosts);
@@ -27,6 +29,15 @@ export default function Posts() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+      <select
+  className="mb-4 p-2 border rounded"
+  value={sortOrder}
+  onChange={(e) => setSortOrder(e.target.value)}
+>
+  <option value="newest">Newest First</option>
+  <option value="oldest">Oldest First</option>
+</select>
+
 
       {selectedTag && (
         <div className="mb-4">
@@ -58,6 +69,13 @@ export default function Posts() {
         }
             
         )
+
+        .sort((a, b) =>
+          sortOrder === "oldest" 
+          ? new Date(a.date) - new Date(b.date)
+          : new Date(b.date) - new Date(a.date)
+        )
+
         .map((post) => (
           <div
             key={post.slug}
@@ -82,7 +100,7 @@ export default function Posts() {
                 <Link
                   to={`?tag=${encodeURIComponent(tag)}`}
                   key={tag}
-                  className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full hover:bg-blue-200 transition"
+                  className="text-xs bg- blue-100 text-blue-700 px-2 py-1 rounded-full hover:bg-blue-200 transition"
                  >
                   #{tag}
                 </Link>
