@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 
+import { isAuthenticated } from "../utils/auth";
+import { Navigate } from "react-router-dom";
+
+
 const generateSlug = (text) =>
   text
     .toLowerCase()
@@ -12,6 +16,7 @@ const generateSlug = (text) =>
 
 
 const CreatePost = () => {
+  
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [slug, setSlug] = useState("");
@@ -23,7 +28,9 @@ const CreatePost = () => {
   const [author, setAuthor] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState('');
-
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
   return (
     <div className="max-w-5xl mx-auto p-4 grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
       {/* Form Side */}
@@ -126,5 +133,4 @@ const CreatePost = () => {
    
   );
 };
-
 export default CreatePost;
