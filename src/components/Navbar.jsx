@@ -8,18 +8,18 @@ const Navbar = () => (
         My Blog
       </Link>
       <div className="space-x-4">
-        <Link to="/" className="text-gray-700 hover:text-indigo-500">
+        <NavLink to="/" className={({ isActive }) => (isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-indigo-700")}>
           Home
-        </Link>
+        </NavLink>
         <NavLink to="/about" className={({ isActive }) => (isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-indigo-700")}>
           About
         </NavLink>
         <NavLink to="/posts" className={({ isActive }) => (isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-indigo-700")}>
           Posts
         </NavLink>
-        <Link to="/create" className="text-gray-700 hover:text-indigo-500">
+        <NavLink to="/create" className={({ isActive }) => (isActive ? "text-blue-600 font-bold" : "text-gray-700 hover:text-indigo-700")}>
           Create
-        </Link>
+        </NavLink>
 
       </div>
     </div>

@@ -8,6 +8,7 @@ export default function PostDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
+  const [authorInfo, setAuthorInfo] = useState(null)
 
   useEffect(() => {
     const storedPosts = JSON.parse(localStorage.getItem("posts") || "[]");
@@ -18,7 +19,16 @@ export default function PostDetail() {
     } else {
       setPost(found);
     }*/
+
+      if (found?.author) {
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      const foundAuthor = users.find((u) => u.username === found.author);
+      setAuthorInfo(foundAuthor || null)
+    }
+
   }, [slug]);
+
+    
   
   //const post = storedPosts.find((p) => p.slug === slug);
   //const authorInfo = authors.find(a => a.name === post?.author);
@@ -40,7 +50,7 @@ export default function PostDetail() {
         ← Back to posts
       </Link>
 
-      <h1 className="text-3xl font-bold mb-2">{post.title}</h1>
+      {/* <h1 className="text-3xl font-bold mb-2">{post.title}</h1>
       <p className="text-sm text-gray-500 mb-2">
         {new Date(post.date).toLocaleDateString("en-GB", {
           year: "numeric",
@@ -52,7 +62,31 @@ export default function PostDetail() {
 
       <div className="mt-4 prose max-w-none text-gray-800">
         <ReactMarkdown>{post.content}</ReactMarkdown>
-      </div>
+      </div> */}
+
+        {post ? (
+  <div className="max-w-3xl mx-auto px-4 py-8">
+    <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+    <p className="text-gray-500 text-sm mb-2 italic font-bold">By {post.author} |     {new Date(post.date).toLocaleDateString("en-GB", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}{" "}
+        </p>
+    <div className="prose">
+      <ReactMarkdown>{post.content}</ReactMarkdown>
+    </div>
+
+    {/* Author Info Section */}
+    <div className="mt-8 p-4 border-t text-sm text-gray-600 bg-gray-50 rounded">
+      <p><strong>Author:</strong> {authorInfo?.username || "Unknown"}</p>
+      <p><strong>Bio:</strong> {authorInfo?.bio || "No bio provided."}</p>
+    </div>
+  </div>
+) : (
+  <p className="text-center mt-10 text-gray-500">Post not found.</p>
+)}
+
 
       {/* Tags */}
       <div className="mt-4 flex flex-wrap gap-2">
